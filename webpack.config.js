@@ -1,5 +1,6 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
+const WasmPackPlugin = require('@wasm-tool/wasm-pack-plugin')
 
 const mode = process.env.NODE_ENV || 'development';
 const prod = mode === 'production';
@@ -19,6 +20,9 @@ module.exports = {
 		path: path.join(__dirname, '/public'),
 		filename: '[name].js',
 		chunkFilename: '[name].[id].js'
+	},
+	experiments: {
+		asyncWebAssembly: true
 	},
 	module: {
 		rules: [
@@ -55,7 +59,10 @@ module.exports = {
 	plugins: [
 		new MiniCssExtractPlugin({
 			filename: '[name].css'
-		})
+		}),
+		new WasmPackPlugin({
+			crateDirectory: path.resolve(__dirname, '.')
+		}),
 	],
 	devtool: prod ? false : 'source-map',
 	devServer: {
